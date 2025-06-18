@@ -27,6 +27,7 @@ ALL_MY_DAEMONS_BG = []
 SESSION_SETTINGS = ""
 FOLDER_LIST = {}
 PRESET_LIST = {}
+FIRST_TIME_RUNNING = True
 IMAGE_TO_PIXEL_TOOL_PATH = Path("NO PATH HAS BEEN DEFINED FOR THE IMAGE TO PIXEL TOOL")
 #CURRENT_ACTIVE_PRESET = "NO ACTIVE PRESET"
 
@@ -173,7 +174,7 @@ def add_new_preset() -> bool:
     palette_URL = ""
     palette_URL = tkinter.simpledialog.askstring("Palette URL", prompt="If you got this palette online, What is the URL for it?")
     
-    make_active = tkinter.messagebox.askyesno(title="Make active preset", message="Would you like to make this preset the active preset?")
+    make_active = tkinter.messagebox.askyesno(title="Make active preset", message="Would you like to make this preset the active preset?") if len(PRESET_LIST.keys()) > 0 else True
     if make_active:
         for preset in PRESET_LIST:
             PRESET_LIST[preset]["Active"] = False
@@ -213,6 +214,7 @@ def convert_folder_bg_to_transparent(input_folder, output_folder, tolerance = 10
 
 def get_img_to_pxl_tool_path(force_dialog = False) -> bool:
     global IMAGE_TO_PIXEL_TOOL_PATH
+    global FIRST_TIME_RUNNING
     logging.debug(f"Running find Img2Pix, path is currently {IMAGE_TO_PIXEL_TOOL_PATH}")
     
     if IMAGE_TO_PIXEL_TOOL_PATH.exists() and IMAGE_TO_PIXEL_TOOL_PATH.is_file() and IMAGE_TO_PIXEL_TOOL_PATH.suffix == (".exe" or ".sh") and force_dialog != True:
@@ -232,6 +234,7 @@ def get_img_to_pxl_tool_path(force_dialog = False) -> bool:
         res = IMAGE_TO_PIXEL_TOOL_PATH.exists() and IMAGE_TO_PIXEL_TOOL_PATH.is_file() and IMAGE_TO_PIXEL_TOOL_PATH != "."
     logging.info(f"res is {res} because PATH.exists = {IMAGE_TO_PIXEL_TOOL_PATH.exists()} and PATH.is_file = {IMAGE_TO_PIXEL_TOOL_PATH.is_file()} and not \".\" = {IMAGE_TO_PIXEL_TOOL_PATH != "."}")
 
+    FIRST_TIME_RUNNING = False
     Update_Labels()
     return res
 
@@ -314,7 +317,7 @@ def Menu():
     All_Presets_Label = tkinter.Label(master=root, text=f"No Presets have been selected", foreground="red" )
     
     
-    Find_Pixel_Tool_btn = tkinter.Button(master=root, text="Find Img 2 Pix Tool", command=lambda : get_img_to_pxl_tool_path(force_dialog=True))
+    Find_Pixel_Tool_btn = tkinter.Button(master=root, text="Find Img 2 Pix Tool", command=lambda : get_img_to_pxl_tool_path(force_dialog=(not FIRST_TIME_RUNNING)))
     Download_Pixel_Tool_btn = tkinter.Button(master=root, text="Download Img 2 Pix Tool", command=lambda : download_pixel_tool())
     Add_folder_to_convert_btn = tkinter.Button(master=root, text="Add Folder folder to convert", foreground="dark green", command=lambda : add_folder())
     DEL_folder_to_convert_btn = tkinter.Button(master=root, text="Remove Folder folder from list", foreground="red3", command=lambda : remove_folder())
