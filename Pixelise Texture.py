@@ -62,7 +62,7 @@ def GetActivePreset() -> str:
         if PRESET_LIST[preset]["Active"]:
             return preset
     logging.error("THERE IS NO ACTIVE PRESET")
-    return "NO ACTIVE PRESET"
+    return ""
 
 
 def TryGetLastSessionSettings() -> bool:
@@ -305,8 +305,11 @@ def Menu():
     style =  ttk.Style(root)
     style.theme_use('clam')  
     root.set_theme("clam", toplevel=True, themebg=False)
-    root.iconbitmap("BatchConverter.ico")
-    root.wm_iconbitmap("BatchConverter.ico")
+    try: 
+        root.iconbitmap("BatchConverter.ico")
+        root.wm_iconbitmap("BatchConverter.ico")
+    except Exception as E:
+        logging.error(f"Setting the App Icon failed because {repr(E)}")
     
     root.title("Projekt 43 Texture Palette Converter")
     Img_to_Pix_label = tkinter.Label(master=root, 
@@ -371,14 +374,14 @@ if __name__ == '__main__':
                 return False
             
         if len(FOLDER_LIST.keys()) <= 0:
-            cancel = tkinter.messagebox.showwarning("No Folders selected", prompt="You Need to select Which folders you want to convert")
+            cancel = tkinter.messagebox.showwarning("No Folders selected", message="You Need to select Which folders you want to convert")
             if cancel:
                 return False
         
         chosen_preset = GetActivePreset()
         
         if not chosen_preset:
-            cancel = tkinter.messagebox.showwarning("No Preset selected", prompt="You Need to select Which preset you want to use")
+            cancel = tkinter.messagebox.showwarning("No Preset selected", message="You Need to select Which preset you want to use")
             if cancel:
                 return False
         
