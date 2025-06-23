@@ -281,7 +281,7 @@ def preset_selection_window():
     new_root.grab_set()
     tkinter.Label(master=new_root, text="Please select which preset you'd like to make the active one").pack()
     for preset in PRESET_LIST:
-        tkinter.Button(master=new_root, text=preset, command=lambda: [clear_all_except(preset), Update_Labels(), new_root.destroy()]).pack()
+        tkinter.Button(master=new_root, text=preset, command=lambda p = preset: [clear_all_except(p), Update_Labels(), new_root.destroy()]).pack()
 
 
 def clear_all_except(exception : str):
